@@ -28,7 +28,7 @@ export default function BinDetail() {
   // Fetch bin details
   const fetchBin = async () => {
     try {
-      const response = await fetch(`http://localhost:3005/bin/${binId}`);
+      const response = await fetch(`https://webhook-tester-production-5c77.up.railway.app/bin/${binId}`);
       if (!response.ok) {
         setNotFound(true);
         return;
@@ -44,7 +44,7 @@ export default function BinDetail() {
   // Fetch requests
   const fetchRequests = async () => {
     try {
-      const response = await fetch(`http://localhost:3005/bin/${binId}/requests`);
+      const response = await fetch(`https://webhook-tester-production-5c77.up.railway.app/bin/${binId}/requests`);
       const data = await response.json();
       setRequests(data);
     } catch (error) {

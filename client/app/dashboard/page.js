@@ -28,7 +28,7 @@ export default function Dashboard() {
     
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3005/bin/user/${user.id}`);
+      const response = await fetch(`https://webhook-tester-production-5c77.up.railway.app/bin/user/${user.id}`);
       const data = await response.json();
       setBins(data);
     } catch (error) {
@@ -37,6 +37,7 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (isLoaded && user) {
@@ -50,7 +51,7 @@ export default function Dashboard() {
     
     setCreating(true);
     try {
-      const response = await fetch('http://localhost:3005/bin/create', {
+      const response = await fetch('https://webhook-tester-production-5c77.up.railway.app/bin/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

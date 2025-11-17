@@ -27,7 +27,7 @@ router.post('/create', async (req, res) => {
     res.json({ 
       id: newBin.id,
       binId: newBin.binId,
-      binUrl: `http://localhost:3005/bin/${newBin.binId}`,
+      binUrl: `https://webhook-tester-production-5c77.up.railway.app/bin/${newBin.binId}`,
       createdAt: newBin.createdAt 
     });
   } catch (error) {
@@ -51,7 +51,7 @@ router.get('/user/:clerkId', async (req, res) => {
     res.json(userBins.map(bin => ({
       id: bin.id,
       binId: bin.binId,
-      binUrl: `http://localhost:3005/bin/${bin.binId}`,
+      binUrl: `https://webhook-tester-production-5c77.up.railway.app/bin/${bin.binId}`,
       createdAt: bin.createdAt
     })));
   } catch (error) {
@@ -83,7 +83,7 @@ router.get('/:binId', async (req, res) => {
     res.json({
       id: bin.id,
       binId: bin.binId,
-      binUrl: `http://localhost:3005/bin/${bin.binId}`,
+      binUrl: `https://webhook-tester-production-5c77.up.railway.app/bin/${bin.binId}`,
       createdAt: bin.createdAt
     });
   } catch (error) {

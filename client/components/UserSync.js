@@ -9,7 +9,7 @@ export default function UserSync() {
   useEffect(() => {
     if (isLoaded && user) {
 
-      fetch('http://localhost:3005/user/sync', {
+      fetch('https://webhook-tester-production-5c77.up.railway.app/user/sync', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
