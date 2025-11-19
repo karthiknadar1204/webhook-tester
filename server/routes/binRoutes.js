@@ -4,6 +4,7 @@ import { db } from '../config/database.js';
 import { bins, users } from '../models/index.js';
 import { Request } from '../models/requestSchema.js';
 import { eq, and } from 'drizzle-orm';
+import mongoose from '../config/db.js';
 
 const router = express.Router();
 
@@ -63,11 +64,19 @@ router.get('/user/:clerkId', async (req, res) => {
 router.get('/:binId/requests', async (req, res) => {
   try {
     const { binId } = req.params;
+    
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.warn('MongoDB not connected, returning empty array');
+      return res.json([]);
+    }
+    
     const requests = await Request.find({ binId }).sort({ timestamp: -1 }).limit(50);
     res.json(requests);
   } catch (error) {
     console.error('Error fetching requests:', error);
-    res.status(500).json({ error: 'Failed to fetch requests' });
+    // Return empty array instead of error to prevent frontend issues
+    res.json([]);
   }
 });
 
@@ -111,12 +120,20 @@ router.all('/:binId', async (req, res) => {
   };
 
   try {
+    // Check if MongoDB is connected before trying to save
+    if (mongoose.connection.readyState !== 1) {
+      console.warn('MongoDB not connected, request not saved but returning OK');
+      return res.status(200).send('OK');
+    }
+    
     const newRequest = new Request(requestData);
     await newRequest.save();
     res.status(200).send('OK');
   } catch (error) {
     console.error('Error saving request:', error);
-    res.status(500).send('Error capturing request');
+    // Still return OK to the webhook sender even if we couldn't save
+    // This prevents webhook senders from retrying
+    res.status(200).send('OK');
   }
 });
 

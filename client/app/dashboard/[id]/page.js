@@ -100,80 +100,111 @@ export default function BinDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="container mx-auto max-w-6xl">
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="text-blue-600 hover:text-blue-700 mb-6"
-        >
-          ← Back to Dashboard
-        </button>
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+      <div className="container mx-auto max-w-6xl space-y-8">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+          >
+            ← Back to Dashboard
+          </button>
+          <span className="text-sm text-gray-500">
+            Last refreshed {new Date().toLocaleTimeString()}
+          </span>
+        </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Bin: {bin.binId}</h1>
+        <header className="space-y-3">
+          <p className="text-sm uppercase tracking-[0.25em] text-gray-500">Bin overview</p>
+          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900">
+            Bin {bin.binId}
+          </h1>
+          <p className="text-gray-600">
+            Monitor inbound webhook requests for this bin in real time. Copy the URL below into any service
+            that supports webhooks to start capturing payloads instantly.
+          </p>
+        </header>
 
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <div className="mb-4">
-            <div className="text-sm font-semibold text-gray-800 mb-2">Webhook URL:</div>
-            <div className="flex items-center gap-2 bg-gray-100 p-3 rounded">
-              <div className="font-mono text-sm break-all text-gray-900 flex-1">
-                {bin.binUrl}
-              </div>
-              <button
-                onClick={() => copyToClipboard(bin.binUrl)}
-                className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 whitespace-nowrap"
-              >
-                {copied ? 'Copied!' : 'Copy URL'}
-              </button>
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="text-sm font-semibold text-gray-800 mb-2">Webhook URL</div>
+              <div className="text-xs text-gray-500">Share this endpoint with any provider to capture the payload.</div>
             </div>
+            <span className="inline-flex items-center text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              {requests.length} captured {requests.length === 1 ? 'request' : 'requests'}
+            </span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center gap-3 bg-gray-50 border border-gray-100 p-4 rounded-xl">
+            <div className="font-mono text-sm break-all text-gray-900 flex-1">
+              {bin.binUrl}
+            </div>
+            <button
+              onClick={() => copyToClipboard(bin.binUrl)}
+              className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors whitespace-nowrap"
+            >
+              {copied ? 'Copied!' : 'Copy URL'}
+            </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Captured Requests</h2>
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-lg p-6 md:p-8">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900">Captured Requests</h2>
+              <p className="text-sm text-gray-500">Live feed of the most recent payloads received by this bin.</p>
+            </div>
             <button
               onClick={refreshRequests}
               disabled={refreshing}
-              className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 disabled:opacity-50"
+              className="inline-flex items-center justify-center bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black disabled:opacity-50 transition-colors"
             >
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              {refreshing ? 'Refreshing...' : 'Refresh feed'}
             </button>
           </div>
 
           {requests.length === 0 ? (
-            <p className="text-gray-700 font-medium">No requests captured yet</p>
+            <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">
+              <p className="text-gray-600 font-medium">No requests captured yet</p>
+              <p className="text-sm text-gray-500 mt-2">Send a webhook payload to this bin to see it appear here.</p>
+            </div>
           ) : (
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="space-y-4 max-h-112 overflow-y-auto pr-2">
               {requests.map((request, index) => (
-                <div key={index} className="border rounded p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      request.method === 'GET' ? 'bg-green-100 text-green-800' :
-                      request.method === 'POST' ? 'bg-blue-100 text-blue-800' :
-                      request.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' :
-                      request.method === 'DELETE' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {request.method}
-                    </span>
+                <div key={index} className="border border-gray-100 rounded-xl p-4 hover:border-gray-200 transition-colors bg-gray-50/60">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide ${
+                        request.method === 'GET' ? 'bg-emerald-100 text-emerald-800' :
+                        request.method === 'POST' ? 'bg-blue-100 text-blue-800' :
+                        request.method === 'PUT' ? 'bg-amber-100 text-amber-900' :
+                        request.method === 'DELETE' ? 'bg-rose-100 text-rose-800' :
+                        'bg-gray-200 text-gray-800'
+                      }`}>
+                        {request.method}
+                      </span>
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-widest">
+                        #{requests.length - index}
+                      </span>
+                    </div>
                     <span className="text-xs text-gray-500">
                       {new Date(request.timestamp).toLocaleString()}
                     </span>
                   </div>
                   
                   {request.headers && (
-                    <div className="mb-2">
-                      <div className="text-sm font-semibold text-gray-800">Headers:</div>
-                      <pre className="text-sm bg-gray-100 p-2 rounded overflow-x-auto text-gray-900 font-mono">
+                    <div className="mb-3">
+                      <div className="text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1">Headers</div>
+                      <pre className="text-sm bg-white border border-gray-200 p-3 rounded-lg overflow-x-auto text-gray-900 font-mono">
                         {JSON.stringify(request.headers, null, 2)}
                       </pre>
                     </div>
                   )}
                   
                   {request.body && Object.keys(request.body).length > 0 && (
-                    <div className="mb-2">
-                      <div className="text-sm font-semibold text-gray-800">Body:</div>
-                      <pre className="text-sm bg-gray-100 p-2 rounded overflow-x-auto text-gray-900 font-mono">
+                    <div className="mb-3">
+                      <div className="text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1">Body</div>
+                      <pre className="text-sm bg-white border border-gray-200 p-3 rounded-lg overflow-x-auto text-gray-900 font-mono">
                         {JSON.stringify(request.body, null, 2)}
                       </pre>
                     </div>
@@ -181,8 +212,8 @@ export default function BinDetail() {
                   
                   {request.query && Object.keys(request.query).length > 0 && (
                     <div>
-                      <div className="text-sm font-semibold text-gray-800">Query:</div>
-                      <pre className="text-sm bg-gray-100 p-2 rounded overflow-x-auto text-gray-900 font-mono">
+                      <div className="text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1">Query</div>
+                      <pre className="text-sm bg-white border border-gray-200 p-3 rounded-lg overflow-x-auto text-gray-900 font-mono">
                         {JSON.stringify(request.query, null, 2)}
                       </pre>
                     </div>
